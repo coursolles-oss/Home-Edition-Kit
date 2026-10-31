@@ -1,0 +1,20 @@
+{
+  "name": "home-edition-kit",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI room-redesign app: upload a photo, answer a few questions, get a design brief with shoppable products.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "server": "npm run dev -w @home-kit/server",
+    "mobile": "npm run start -w @home-kit/mobile",
+    "test": "npm test -w @home-kit/server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build:server": "npm run build -w @home-kit/server"
+  },
+  "engines": {
+    "node": ">=22.9"
+  }
+}

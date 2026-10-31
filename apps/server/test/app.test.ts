@@ -189,6 +189,41 @@ describe("error handling", () => {
   });
 });
 
+describe("CORS", () => {
+  const allowOrigin = (res: request.Response) => res.headers["access-control-allow-origin"];
+
+  it("by default allows pages served from localhost (Expo web dev) and nobody else", async () => {
+    const app = makeApp();
+    expect(allowOrigin(await request(app).get("/health").set("Origin", "http://localhost:8081"))).toBe(
+      "http://localhost:8081",
+    );
+    expect(allowOrigin(await request(app).get("/health").set("Origin", "http://127.0.0.1:8082"))).toBe(
+      "http://127.0.0.1:8082",
+    );
+    expect(allowOrigin(await request(app).get("/health").set("Origin", "https://evil.example"))).toBeUndefined();
+    // Looks like localhost but isn't.
+    expect(allowOrigin(await request(app).get("/health").set("Origin", "http://localhost.evil.example"))).toBeUndefined();
+  });
+
+  it("CORS_ORIGINS replaces the default with an explicit allow-list", async () => {
+    const app = makeApp({ config: { ...testConfig, CORS_ORIGINS: "https://app.example.com" } });
+    expect(allowOrigin(await request(app).get("/health").set("Origin", "https://app.example.com"))).toBe(
+      "https://app.example.com",
+    );
+    expect(allowOrigin(await request(app).get("/health").set("Origin", "http://localhost:8081"))).toBeUndefined();
+  });
+
+  it("answers the browser's preflight check for a JSON POST", async () => {
+    const res = await request(makeApp())
+      .options("/api/intake")
+      .set("Origin", "http://localhost:8081")
+      .set("Access-Control-Request-Method", "POST")
+      .set("Access-Control-Request-Headers", "content-type");
+    expect(res.status).toBe(204);
+    expect(allowOrigin(res)).toBe("http://localhost:8081");
+  });
+});
+
 describe("rate limiting", () => {
   it("returns 429 once the per-client limit is exceeded", async () => {
     const app = makeApp({ config: { ...testConfig, RATE_LIMIT_MAX: 2 } });

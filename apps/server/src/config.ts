@@ -6,8 +6,9 @@ const EnvSchema = z.object({
   AI_PROVIDER: z.enum(["claude", "mock"]).default("claude"),
   CLAUDE_MODEL: z.string().min(1).default("claude-opus-5-5"),
   /**
-   * Comma-separated browser origins allowed by CORS. Native mobile apps do not need CORS;
-   * this is only for Expo web / browser testing. "*" allows any origin (development only).
+   * Comma-separated browser origins allowed by CORS. Native mobile apps do not need CORS; this
+   * only matters for the web build. When unset, only pages served from localhost are allowed.
+   * "*" allows any origin (development only).
    */
   CORS_ORIGINS: z.string().optional(),
   /** Requests per window per client IP, across all /api routes. Every request can cost money. */

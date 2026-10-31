@@ -25,6 +25,8 @@ export type AppDeps = {
   config: Pick<Config, "CORS_ORIGINS" | "RATE_LIMIT_MAX" | "RATE_LIMIT_WINDOW_MIN" | "TRUST_PROXY">;
 };
 
+const LOCALHOST_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
 /** Base64 of a 5 MB image is ~6.7 MB; leave a little room for the JSON envelope. */
 const JSON_BODY_LIMIT = "8mb";
 
@@ -45,9 +47,14 @@ export function createApp({ ai, catalog, config }: AppDeps) {
   app.disable("x-powered-by");
   if (config.TRUST_PROXY > 0) app.set("trust proxy", config.TRUST_PROXY);
 
+  // Browsers refuse cross-origin calls unless the server opts in. By default only pages served
+  // from this same machine (e.g. the Expo web dev server on localhost:8081) are allowed, so
+  // trying the app in a browser works with zero setup. CORS_ORIGINS overrides this.
   if (config.CORS_ORIGINS) {
     const origins = config.CORS_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean);
     app.use(cors({ origin: origins.includes("*") ? true : origins }));
+  } else {
+    app.use(cors({ origin: LOCALHOST_ORIGIN }));
   }
 
   app.get("/health", (_req, res) => {

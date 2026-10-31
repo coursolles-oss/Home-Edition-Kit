@@ -3,6 +3,18 @@
 A mobile app that redesigns your room. Take a photo, answer a few questions, and get a design
 brief (concept, colour palette, layout ideas) with specific products you can buy.
 
+## What it looks like
+
+Demo mode (the photo is a placeholder and the text is canned): photo, room analysis, interview,
+design brief.
+
+<p>
+  <img src="docs/screenshots/01-photo.png" width="190" alt="Photo screen" />
+  <img src="docs/screenshots/02-analysis.png" width="190" alt="Room analysis" />
+  <img src="docs/screenshots/03-chat.png" width="190" alt="Interview chat" />
+  <img src="docs/screenshots/04-design.png" width="190" alt="Design brief with products" />
+</p>
+
 ## Status
 
 This is the first vertical slice: **photo → room analysis → intake interview → design brief with
@@ -52,38 +64,46 @@ Design decisions worth knowing:
 
 ## Run it
 
-Requires Node 22.9+.
+You need [Node.js](https://nodejs.org) 22.9 or newer (the "LTS" download is fine). Open a terminal
+in this folder and run:
 
 ```bash
 npm install
 ```
 
-**1. Start the server** (pick one):
+You'll then use **two terminal windows**: one for the server, one for the app.
+
+**Window 1: the server.** Start in demo mode, which returns canned answers, needs no API key and
+costs nothing:
+
+1. Copy `apps/server/.env.example` to `apps/server/.env`.
+2. In the new `.env` file, change `AI_PROVIDER=claude` to `AI_PROVIDER=mock`.
+3. Run:
 
 ```bash
-# Real Claude calls
-cp apps/server/.env.example apps/server/.env     # then set ANTHROPIC_API_KEY
 npm run server
-
-# Or: canned responses, no key and no spend. Good for UI work.
-AI_PROVIDER=mock npm run server
 ```
 
-**2. Start the app:**
+**Window 2: the app.**
 
 ```bash
 npm run mobile
 ```
 
-Then scan the QR code with Expo Go (phone on the same Wi-Fi as your computer), or press `i` / `a`
-for a simulator, or `w` for the browser. In development the app finds the server automatically
-(same host as the Expo dev server, port 3000). Overrides and the Android-emulator address are in
-`apps/mobile/.env.example`.
+When it says it's ready, press **`w`** to open the app in your browser. A computer has no rear
+camera, so use **Choose from library** and pick any photo. To use your phone instead, install
+**Expo Go** from the App Store / Google Play and scan the QR code shown in the terminal (phone and
+computer on the same Wi-Fi). The app finds the server automatically. Overrides and the
+Android-emulator address are in `apps/mobile/.env.example`.
+
+Demo mode gives the same pre-written room analysis and questions whatever photo you choose. To use
+the real AI, put your key in `apps/server/.env` (`ANTHROPIC_API_KEY=...`), set
+`AI_PROVIDER=claude`, and restart the server.
 
 **Checks:**
 
 ```bash
-npm test               # server tests (47)
+npm test               # server tests (50)
 npm run typecheck      # all workspaces
 npm run build:server   # production bundle -> apps/server/dist
 ```

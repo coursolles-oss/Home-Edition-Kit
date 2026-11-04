@@ -76,9 +76,14 @@ You'll then use **two terminal windows**: one for the server, one for the app.
 **Window 1: the server.** Start in demo mode, which returns canned answers, needs no API key and
 costs nothing:
 
-1. Copy `apps/server/.env.example` to `apps/server/.env`.
-2. In the new `.env` file, change `AI_PROVIDER=claude` to `AI_PROVIDER=mock`.
-3. Run:
+1. Create the settings file `apps/server/.env` containing the single line `AI_PROVIDER=mock`.
+   The easiest way is one command, run from this folder:
+
+   - **Windows (PowerShell):** `"AI_PROVIDER=mock" | Out-File -Encoding ascii apps\server\.env`
+   - **Mac / Linux:** `echo AI_PROVIDER=mock > apps/server/.env`
+
+   (Every other setting has a sensible default. `apps/server/.env.example` lists them all.)
+2. Run:
 
 ```bash
 npm run server

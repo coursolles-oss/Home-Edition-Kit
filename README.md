@@ -101,6 +101,16 @@ camera, so use **Choose from library** and pick any photo. To use your phone ins
 computer on the same Wi-Fi). The app finds the server automatically. Overrides and the
 Android-emulator address are in `apps/mobile/.env.example`.
 
+**Windows: "running scripts is disabled on this system".** PowerShell blocks `npm` by default.
+Run this once, answer `Y`, then retry:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+It only affects your own user account. (If your computer is managed by an employer and refuses,
+use Command Prompt instead of PowerShell; the same commands work there.)
+
 Demo mode gives the same pre-written room analysis and questions whatever photo you choose. To use
 the real AI, put your key in `apps/server/.env` (`ANTHROPIC_API_KEY=...`), set
 `AI_PROVIDER=claude`, and restart the server.
